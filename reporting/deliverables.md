@@ -35,33 +35,7 @@ dedupe_findings
   done
 } > $RUN/report/vulnerability-report.md
 
-python3 - "$FINDINGS" "$TARGET" "$HX_RUN_ID" > $RUN/report/vulnerability-report.html <<'PY'
-import html, sys, datetime
-findings, target, run = sys.argv[1], sys.argv[2], sys.argv[3]
-color = {"critical":"#d11","high":"#e3401f","medium":"#e07b1a","low":"#c9a227","info":"#2b8fd1"}
-rows = []
-try:
-    for line in open(findings):
-        f = line.rstrip("\n").split("\t")
-        if len(f) < 6: continue
-        sev, kind, title, tgt, tool, ev = f[:6]
-        c = color.get(sev, "#888")
-        rows.append(f'<div class="card" style="border-left:6px solid {c}">'
-                    f'<span class="badge" style="background:{c}">{html.escape(sev.upper())}</span>'
-                    f'<h3>{html.escape(title)}</h3>'
-                    f'<p class="meta">{html.escape(tgt)} | {html.escape(tool)} | {html.escape(kind)}</p>'
-                    f'<pre>{html.escape(ev)}</pre></div>')
-except FileNotFoundError:
-    pass
-print(f"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>Report {html.escape(target)}</title>
-<style>body{{background:#0d0f12;color:#e6e6e6;font-family:monospace;padding:32px}}
-h1{{color:#ff3b30}}.card{{background:#14181d;border-radius:8px;padding:16px;margin:12px 0}}
-.badge{{color:#fff;padding:2px 8px;border-radius:4px;font-size:12px}}
-.meta{{color:#9aa4b2;font-size:12px}}pre{{background:#0a0c0f;padding:10px;border-radius:6px;overflow:auto}}</style>
-</head><body><h1>Vulnerability Report</h1>
-<p class="meta">{html.escape(target)} | run {html.escape(run)} | {datetime.datetime.utcnow().isoformat()}Z</p>
-{''.join(rows) or '<p>No findings.</p>'}</body></html>""")
-PY
+python3 "$SKILLS/scripts/report_html.py" "$FINDINGS" "$TARGET" "$HX_RUN_ID" > $RUN/report/vulnerability-report.html
 ```
 
 ## 工具输出美化（20 行窗口 + 分类标记）

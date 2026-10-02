@@ -22,7 +22,7 @@ export TARGET='<target>'
 export RUN=/tmp/hexstrike/$TARGET-$(date +%Y%m%d-%H%M%S)
 export FINDINGS=$RUN/parsed/findings.tsv
 mkdir -p $RUN/{raw,parsed,report,artifacts}
-add_finding() { printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$1" "$2" "$3" "$4" "$5" "$6" >> "$FINDINGS"; }
+source "$SKILLS/scripts/hx.sh"   # add_finding / classify / ...
 
 # 端口（后台）
 nohup nmap -sS -sV -T4 --top-ports 1000 -oA $RUN/raw/nmap_top "$TARGET" >/dev/null 2>&1 &

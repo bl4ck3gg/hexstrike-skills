@@ -60,17 +60,15 @@ fi
 sort -u $RUN/parsed/urls.txt -o $RUN/parsed/urls.txt; wc -l $RUN/parsed/urls.txt
 ```
 
-## Match/Replace 规则（发请求前套用）
+## Match/Replace 规则（发请求前套用，需 `source "$SKILLS/scripts/hx.sh"`）
 ```bash
-rule() { echo "$1" | sed -E "$2"; }        # 例：改参数
-U2=$(rule "$U" 's/uid=[0-9]+/uid=1/')
+U2=$(rule "$U" 's/uid=[0-9]+/uid=1/')     # rule <input> <sed-expr>
 # 批量规则：写进变量，重放前统一应用
 ```
 
 ## Scope 校验（越界直接拒绝）
 ```bash
 SCOPE='target.com'
-in_scope() { case "$1" in *"://$SCOPE"*|*".$SCOPE"*) return 0;; *) return 1;; esac; }
 in_scope "$U" && curl -sSk "$U" || echo "out of scope: $U"
 ```
 

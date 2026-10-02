@@ -80,16 +80,8 @@ docker-bench-security 180 falco 120 checkov 240 terrascan 200`
 
 **纯 shell 计算**（把候选工具作为参数）：
 ```bash
-python3 - "$CONF" nmap gobuster nuclei <<'PY'
-import sys
-eff={"nmap":.8,"gobuster":.9,"nuclei":.95,"nikto":.85,"sqlmap":.9,"ffuf":.9}
-t={"nmap":120,"gobuster":300,"nuclei":180,"nikto":240,"sqlmap":600,"ffuf":200}
-conf=float(sys.argv[1]); chain=1.0; est=0
-for tool in sys.argv[2:]:
-    p=eff.get(tool,.5)*conf; chain*=p; est+=t.get(tool,180)
-    print(f"{tool:12s} p={p:.3f} t={t.get(tool,180)}s")
-print(f"chain P={chain:.6f} est={est}s")
-PY
+python3 "$SKILLS/scripts/chain_score.py" "$CONF" nmap gobuster nuclei
+python3 "$SKILLS/scripts/chain_score.py" "$CONF" --type api_endpoint nuclei ffuf httpx
 ```
 
 ## 8. 执行流程（smart-scan 入口）

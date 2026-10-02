@@ -51,39 +51,22 @@ done
 grep -oiE '^set-cookie:.*' $RUN/raw/headers.txt   # 看 Secure/HttpOnly/SameSite
 ```
 
-## 3) 需要 storage/console/network 时：直接粘贴执行
-把 `<url>`、`<out.png>` 换成真实值，整段粘贴运行：
+## 3) 需要 storage/console/network 时：用 scripts/playwright_probe.py
 ```bash
-python3 - '<url>' '<out.png>' <<'PY'
-from playwright.sync_api import sync_playwright
-import json, sys
-url = sys.argv[1]; shot = sys.argv[2] if len(sys.argv) > 2 else "/tmp/hx_page.png"
-with sync_playwright() as p:
-    b = p.chromium.launch(headless=True, args=["--no-sandbox", "--ignore-certificate-errors"])
-    ctx = b.new_context(ignore_https_errors=True); pg = ctx.new_page()
-    net, errs = [], []
-    pg.on("request", lambda r: net.append(r.url))
-    pg.on("console", lambda m: errs.append({"type": m.type, "text": m.text}) if m.type in ("error", "warning") else None)
-    pg.goto(url, wait_until="domcontentloaded", timeout=60000); pg.wait_for_timeout(3000)
-    out = pg.evaluate("""() => {const s=x=>{const o={};for(let i=0;i<x.length;i++){const k=x.key(i);o[k]=x.getItem(k)}return o};
-      return {title:document.title,url:location.href,cookie:document.cookie,
-              local_storage:s(localStorage),session_storage:s(sessionStorage),
-              forms:[...document.querySelectorAll('form')].map(f=>({action:f.action,method:f.method,
-                inputs:[...f.querySelectorAll('input,textarea,select')].map(i=>({name:i.name,type:i.type}))})),
-              scripts:[...document.querySelectorAll('script')].map(s=>s.src||'inline')}}""")
-    out["network"] = net; out["console"] = errs
-    pg.screenshot(path=shot, full_page=True)
-    print(json.dumps(out, indent=2, ensure_ascii=False)); b.close()
-PY
+python3 "$SKILLS/scripts/playwright_probe.py" '<url>' $RUN/artifacts/page.png --json-out $RUN/parsed/browser.json
 ```
-判定：
+输出含 `local_storage` / `session_storage` / `console` / `network` / `forms`，
+并附 `assessment.issues` 与 `security_score`。安装：
+`pip3 install --break-system-packages playwright && python3 -m playwright install chromium`。
+（不装 playwright 时 `--help` 仍可用；其他文档仍可零依赖运行。）
+
+判定（脚本已内置，人工复核用）：
 ```
 storage key 含 password/token/secret/key -> high
 POST 表单无 csrf/token -> medium
 内联 JS 数量 -> low
 security_score = max(0, 100 - issues*5)
 ```
-安装：`pip3 install --break-system-packages playwright && python3 -m playwright install chromium`。
 
 ## 4) 反射 XSS 主动测试（GET 表单，最多 5 个，保守）
 ```bash

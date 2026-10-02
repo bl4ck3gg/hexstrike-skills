@@ -8,6 +8,7 @@ when_to_use: 开始任务前
 ## 1. 引导块（每个任务开始时执行一次）
 ```bash
 export TARGET='<target>'
+export SKILLS='<skill包根>'          # 本包根目录（含 scripts/）
 export HX_ROOT=/tmp/hexstrike
 export HX_RUN_ID=$(echo "$TARGET" | tr '/: ' '___')-$(date +%Y%m%d-%H%M%S)
 export RUN=$HX_ROOT/$HX_RUN_ID
@@ -15,10 +16,13 @@ export FINDINGS=$RUN/parsed/findings.tsv
 mkdir -p $RUN/{raw,parsed,report,artifacts}
 printf '# %s %s\n' "$TARGET" "$(date -u +%FT%TZ)" > $RUN/meta.txt
 
-# findings 记录器（字段: sev kind title target tool evidence）
-add_finding() { printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$1" "$2" "$3" "$4" "$5" "$6" >> "$FINDINGS"; }
-dedupe_findings() { sort -u -t$'\t' -k1,4 "$FINDINGS" -o "$FINDINGS"; }
+# 引入 add_finding / dedupe_findings / classify / rule / in_scope
+source "$SKILLS/scripts/hx.sh"
+hx_selftest            # 校验 RUN/FINDINGS 与函数就位
 ```
+
+> **为什么必须 source**：termcp 每次执行基本是独立 shell，
+> 函数不会跨调用存活。不 source 则 `add_finding` 不存在，findings 会丢。
 
 ## 2. 工具探测
 ```bash

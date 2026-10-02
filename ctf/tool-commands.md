@@ -18,6 +18,7 @@ paramspider: `paramspider -d {}`
 wpscan: `wpscan --url {} --enumerate ap,at,cb,dbe`
 nikto: `nikto -h {} -C all`
 whatweb: `whatweb -v -a 3`
+httpx-osint: `httpx -title -tech-detect -status-code`
 
 ## Crypto
 hashcat: `hashcat -m 0 -a 0 --potfile-disable --quiet`
@@ -84,6 +85,11 @@ autopsy: `autopsy`
 sleuthkit: `fls -r`
 scalpel: `scalpel -c /etc/scalpel/scalpel.conf`
 bulk-extractor: `bulk_extractor -o /tmp/bulk_output`
+networkminer: `mono /opt/NetworkMiner/NetworkMiner.exe`
+ddrescue: `ddrescue`
+dc3dd: `dc3dd`
+barcode-decoder: `zbarimg`
+sonic-visualizer: `sonic-visualizer`
 
 ## Rev
 ida: `ida64`
@@ -100,6 +106,10 @@ dex2jar: `dex2jar`
 jd-gui: `jd-gui`
 dnspy: `dnspy`
 ilspy: `ilspy`
+binary-ninja: `binaryninja`
+windbg: `windbg`
+immunity: `immunity`
+dotpeek: `dotpeek`
 
 ## OSINT
 sherlock: `sherlock`
@@ -116,6 +126,12 @@ fierce: `fierce -dns`
 sublist3r: `sublist3r -d`
 amass: `amass enum -d`
 subfinder: `subfinder -d`
+maltego: `maltego`
+nslookup: `nslookup`
+host: `host`
+assetfinder: `assetfinder`
+waybackurls: `waybackurls`
+gau: `gau`
 
 ## Misc
 qr-decoder: `zbarimg`
@@ -132,6 +148,9 @@ tar: `tar -xf`
 gzip: `gunzip`
 bzip2: `bunzip2`
 xz: `unxz`
+lzma: `unlzma`
+compress: `uncompress`
+ook: `python3 /opt/ook/ook.py`
 
 ## 现代 Web
 jwt-tool: `python3 /opt/jwt_tool/jwt_tool.py`
@@ -140,3 +159,22 @@ postman: `newman run`
 burpsuite: `java -jar /opt/burpsuite/burpsuite.jar`
 owasp-zap: `zap.sh -cmd`
 websocket-king: `python3 /opt/websocket-king/ws_test.py`
+graphql-voyager: `graphql-voyager`
+graphql-playground: `graphql-playground`
+
+## 移动端
+adb: `adb`
+frida: `frida`
+objection: `objection`
+mobsf: `python3 /opt/mobsf/manage.py`
+apkleaks: `apkleaks -f`
+qark: `qark --apk`
+
+## 云 / IaC
+docker: `docker`
+kubectl: `kubectl`
+aws-cli: `aws`
+azure-cli: `az`
+gcloud: `gcloud`
+terraform: `terraform`
+ansible: `ansible`

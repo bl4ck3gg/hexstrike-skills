@@ -16,13 +16,15 @@
 | `vuln-intel/` | CVE 监控、exploit 检索/生成、攻击链、零日、威胁情报、威胁狩猎 |
 | `reporting/` | 扫描摘要、漏洞报告（md+html）、工具输出美化、dashboard |
 | `recovery/` `optimization/` `agents/` | 错误恢复策略、参数优化、编排流程 |
-| `ctf/` `bugbounty/` `payloads/` | 知识域 |
+| `ctf/` `bugbounty/` `payloads/` | 知识域（`ctf/strategy-matrix.md` 是策略/工具选择入口） |
+| `scripts/` | 跨 shell 函数与 >20 行的程序（`hx.sh`、报告、解析、探测） |
 
 ## 使用约定
 
 1. **先定记录位置**：原始输出存 `raw/`，发现记 `parsed/findings.tsv`（制表符分隔：
    `sev kind title target tool evidence`），报告只读它 —— 输出丢了也能恢复。
-2. **命令直接执行**：文档中的命令块可直接粘贴运行，无需先落成脚本文件。
+2. **引导块先 source**：`source "$SKILLS/scripts/hx.sh"` 拿到 `add_finding` 等跨 shell 函数；
+   其余命令块可直接粘贴运行，无需先落成脚本文件。
 3. **每条发现必须可复现**：URL/参数/payload/证据齐全；未验证的猜测记 `info`。
 
 最小引导块见 `basics/environment.md`。

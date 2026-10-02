@@ -32,7 +32,16 @@ python3 - <<'PY'
 <文档里的代码块>
 PY
 ```
-不需要先落成脚本文件；只有需要反复执行的长逻辑才建议存到 `$RUN/` 下。
+不需要先落成脚本文件。只有下列**跨 shell 存活**或**超过 20 行**的逻辑才放在 `scripts/`：
+
+| 脚本 | 用途 |
+|---|---|
+| `scripts/hx.sh` | `add_finding` / `dedupe_findings` / `classify` / `rule` / `in_scope` |
+| `scripts/report_html.py` | findings.tsv → HTML 报告 |
+| `scripts/nmap_xml.py` | nmap XML → JSON/TSV |
+| `scripts/json_extract.py` | 从噪声输出里提取 JSON |
+| `scripts/playwright_probe.py` | 浏览器 storage/console/network 检查 |
+| `scripts/chain_score.py` | 攻击链复合概率与耗时 |
 
 ## 输出解析
 ANSI/提示符噪声清洗：
@@ -41,16 +50,12 @@ ANSI/提示符噪声清洗：
 ```
 从混合输出里提取 JSON：
 ```bash
-python3 -c "import json,sys,re;d=sys.stdin.read();m=re.search(r'\{.*\}',d,re.S);print(json.dumps(json.loads(m.group(0)),indent=2))" < out.txt
+python3 "$SKILLS/scripts/json_extract.py" out.txt      # 或 < out.txt
 ```
 nmap XML → 端口表：
 ```bash
-python3 - /path/nmap.xml <<'PY'
-import json,re,sys
-x=open(sys.argv[1]).read()
-print(json.dumps([{"port":p,"state":s,"service":sv} for p,s,sv in
-  re.findall(r'<port protocol="\w+" portid="(\d+)">.*?<state state="(\w+)".*?<service name="([^"]*)"', x, re.S)], indent=2))
-PY
+python3 "$SKILLS/scripts/nmap_xml.py" /path/nmap.xml          # JSON
+python3 "$SKILLS/scripts/nmap_xml.py" /path/nmap.xml --tsv    # TSV
 ```
 
 ## 严重度判定
